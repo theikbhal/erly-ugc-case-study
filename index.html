@@ -58,6 +58,9 @@
       0% { transform: scale(0.8); opacity: 1; }
       80%, 100% { transform: scale(1.3); opacity: 0; }
     }
+    .view-btn.active { background: #FF6B35; color: white; }
+    .view-btn:not(.active) { border: 1px solid rgba(255,255,255,0.2); color: #9ca3af; }
+    .view-btn:not(.active):hover { border-color: rgba(255,255,255,0.4); color: white; }
   </style>
 </head>
 <body class="bg-erly-darker text-white">
@@ -329,18 +332,36 @@
   <!-- Video Performance Table -->
   <section id="stats" class="py-20 bg-erly-dark">
     <div class="max-w-6xl mx-auto px-4">
-      <div class="text-center mb-12">
+      <div class="text-center mb-8">
         <h2 class="text-3xl md:text-5xl font-black mb-4">Video <span class="gradient-text">Performance</span></h2>
         <p class="text-gray-400">Last 21 videos from @macywakesup promoting Erly</p>
       </div>
 
-      <!-- Desktop Table -->
-      <div class="hidden md:block overflow-x-auto">
+      <!-- View Toggle Controls -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+        <button onclick="toggleView('table')" id="btn-table" class="view-btn active px-4 py-2 rounded-full text-sm font-semibold transition">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M3 6h18M3 18h18"></path></svg>
+          Table
+        </button>
+        <button onclick="toggleView('calendar')" id="btn-calendar" class="view-btn px-4 py-2 rounded-full text-sm font-semibold transition">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Calendar
+        </button>
+        <span class="text-gray-600 hidden sm:inline">|</span>
+        <button onclick="toggleDayColumn()" id="btn-day" class="px-4 py-2 rounded-full text-sm font-semibold transition border border-white/20 hover:border-white/40 text-gray-400 hover:text-white">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Day Name
+        </button>
+      </div>
+
+      <!-- Table View -->
+      <div id="view-table" class="hidden md:block overflow-x-auto">
         <table class="w-full">
           <thead>
             <tr class="border-b border-white/10">
               <th class="text-left py-4 px-4 text-sm text-gray-500 font-medium">#</th>
               <th class="text-left py-4 px-4 text-sm text-gray-500 font-medium">Date</th>
+              <th class="text-left py-4 px-4 text-sm text-gray-500 font-medium day-col hidden">Day</th>
               <th class="text-right py-4 px-4 text-sm text-gray-500 font-medium">Views</th>
               <th class="text-right py-4 px-4 text-sm text-gray-500 font-medium">Likes</th>
               <th class="text-right py-4 px-4 text-sm text-gray-500 font-medium">Comments</th>
@@ -348,29 +369,88 @@
             </tr>
           </thead>
           <tbody class="text-sm">
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">1</td><td class="py-3 px-4 text-gray-400">May 7</td><td class="py-3 px-4 text-right font-semibold">23.7K</td><td class="py-3 px-4 text-right">398</td><td class="py-3 px-4 text-right">10</td><td class="py-3 px-4 text-right">148</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">2</td><td class="py-3 px-4 text-gray-400">Apr 25</td><td class="py-3 px-4 text-right font-semibold">12.4K</td><td class="py-3 px-4 text-right">231</td><td class="py-3 px-4 text-right">6</td><td class="py-3 px-4 text-right">26</td></tr>
-            <tr class="border-b border-erly-orange/30 bg-erly-orange/5 hover:bg-erly-orange/10 transition"><td class="py-3 px-4">3</td><td class="py-3 px-4 text-erly-orange">Apr 25</td><td class="py-3 px-4 text-right font-black text-erly-orange">12.74M</td><td class="py-3 px-4 text-right font-bold">707.5K</td><td class="py-3 px-4 text-right">1,474</td><td class="py-3 px-4 text-right">62.8K</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">4</td><td class="py-3 px-4 text-gray-400">Jul 6</td><td class="py-3 px-4 text-right font-semibold">4.2K</td><td class="py-3 px-4 text-right">104</td><td class="py-3 px-4 text-right">8</td><td class="py-3 px-4 text-right">13</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">5</td><td class="py-3 px-4 text-gray-400">Jul 5</td><td class="py-3 px-4 text-right">1.4K</td><td class="py-3 px-4 text-right">27</td><td class="py-3 px-4 text-right">2</td><td class="py-3 px-4 text-right">3</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">6</td><td class="py-3 px-4 text-gray-400">Jul 3</td><td class="py-3 px-4 text-right">1.8K</td><td class="py-3 px-4 text-right">24</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">7</td><td class="py-3 px-4 text-gray-400">Jul 3</td><td class="py-3 px-4 text-right font-semibold">3.3K</td><td class="py-3 px-4 text-right">81</td><td class="py-3 px-4 text-right">5</td><td class="py-3 px-4 text-right">3</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">8</td><td class="py-3 px-4 text-gray-400">Jul 2</td><td class="py-3 px-4 text-right text-gray-500">9</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">9</td><td class="py-3 px-4 text-gray-400">Jul 1</td><td class="py-3 px-4 text-right">1.3K</td><td class="py-3 px-4 text-right">50</td><td class="py-3 px-4 text-right">2</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">10</td><td class="py-3 px-4 text-gray-400">Jun 30</td><td class="py-3 px-4 text-right font-semibold">2.6K</td><td class="py-3 px-4 text-right">76</td><td class="py-3 px-4 text-right">6</td><td class="py-3 px-4 text-right">1</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">11</td><td class="py-3 px-4 text-gray-400">Jun 29</td><td class="py-3 px-4 text-right">1.1K</td><td class="py-3 px-4 text-right">25</td><td class="py-3 px-4 text-right">3</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">12</td><td class="py-3 px-4 text-gray-400">Jun 28</td><td class="py-3 px-4 text-right font-semibold">2.5K</td><td class="py-3 px-4 text-right">57</td><td class="py-3 px-4 text-right">7</td><td class="py-3 px-4 text-right">11</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">13</td><td class="py-3 px-4 text-gray-400">Jun 27</td><td class="py-3 px-4 text-right">858</td><td class="py-3 px-4 text-right">12</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">14</td><td class="py-3 px-4 text-gray-400">Jun 26</td><td class="py-3 px-4 text-right font-semibold">2.8K</td><td class="py-3 px-4 text-right">61</td><td class="py-3 px-4 text-right">5</td><td class="py-3 px-4 text-right">4</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">15</td><td class="py-3 px-4 text-gray-400">Jun 25</td><td class="py-3 px-4 text-right font-semibold">4.7K</td><td class="py-3 px-4 text-right">123</td><td class="py-3 px-4 text-right">7</td><td class="py-3 px-4 text-right">28</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">16</td><td class="py-3 px-4 text-gray-400">Jun 24</td><td class="py-3 px-4 text-right">1.4K</td><td class="py-3 px-4 text-right">32</td><td class="py-3 px-4 text-right">2</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">17</td><td class="py-3 px-4 text-gray-400">Jun 23</td><td class="py-3 px-4 text-right font-semibold">2.6K</td><td class="py-3 px-4 text-right">62</td><td class="py-3 px-4 text-right">4</td><td class="py-3 px-4 text-right">5</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">18</td><td class="py-3 px-4 text-gray-400">Jun 22</td><td class="py-3 px-4 text-right font-semibold">4.7K</td><td class="py-3 px-4 text-right">181</td><td class="py-3 px-4 text-right">4</td><td class="py-3 px-4 text-right">15</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">19</td><td class="py-3 px-4 text-gray-400">Jun 21</td><td class="py-3 px-4 text-right font-semibold">4.6K</td><td class="py-3 px-4 text-right">135</td><td class="py-3 px-4 text-right">6</td><td class="py-3 px-4 text-right">12</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">20</td><td class="py-3 px-4 text-gray-400">Jun 20</td><td class="py-3 px-4 text-right">951</td><td class="py-3 px-4 text-right">20</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td></tr>
-            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">21</td><td class="py-3 px-4 text-gray-400">Jun 19</td><td class="py-3 px-4 text-right font-semibold">2.5K</td><td class="py-3 px-4 text-right">37</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">9</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">1</td><td class="py-3 px-4 text-gray-400">May 7</td><td class="py-3 px-4 text-gray-400 day-col hidden">Wed</td><td class="py-3 px-4 text-right font-semibold">23.7K</td><td class="py-3 px-4 text-right">398</td><td class="py-3 px-4 text-right">10</td><td class="py-3 px-4 text-right">148</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">2</td><td class="py-3 px-4 text-gray-400">Apr 25</td><td class="py-3 px-4 text-gray-400 day-col hidden">Fri</td><td class="py-3 px-4 text-right font-semibold">12.4K</td><td class="py-3 px-4 text-right">231</td><td class="py-3 px-4 text-right">6</td><td class="py-3 px-4 text-right">26</td></tr>
+            <tr class="border-b border-erly-orange/30 bg-erly-orange/5 hover:bg-erly-orange/10 transition"><td class="py-3 px-4">3</td><td class="py-3 px-4 text-erly-orange">Apr 25</td><td class="py-3 px-4 text-erly-orange day-col hidden">Fri</td><td class="py-3 px-4 text-right font-black text-erly-orange">12.74M</td><td class="py-3 px-4 text-right font-bold">707.5K</td><td class="py-3 px-4 text-right">1,474</td><td class="py-3 px-4 text-right">62.8K</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">4</td><td class="py-3 px-4 text-gray-400">Jul 6</td><td class="py-3 px-4 text-gray-400 day-col hidden">Sun</td><td class="py-3 px-4 text-right font-semibold">4.2K</td><td class="py-3 px-4 text-right">104</td><td class="py-3 px-4 text-right">8</td><td class="py-3 px-4 text-right">13</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">5</td><td class="py-3 px-4 text-gray-400">Jul 5</td><td class="py-3 px-4 text-gray-400 day-col hidden">Sat</td><td class="py-3 px-4 text-right">1.4K</td><td class="py-3 px-4 text-right">27</td><td class="py-3 px-4 text-right">2</td><td class="py-3 px-4 text-right">3</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">6</td><td class="py-3 px-4 text-gray-400">Jul 3</td><td class="py-3 px-4 text-gray-400 day-col hidden">Thu</td><td class="py-3 px-4 text-right">1.8K</td><td class="py-3 px-4 text-right">24</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">7</td><td class="py-3 px-4 text-gray-400">Jul 3</td><td class="py-3 px-4 text-gray-400 day-col hidden">Thu</td><td class="py-3 px-4 text-right font-semibold">3.3K</td><td class="py-3 px-4 text-right">81</td><td class="py-3 px-4 text-right">5</td><td class="py-3 px-4 text-right">3</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">8</td><td class="py-3 px-4 text-gray-400">Jul 2</td><td class="py-3 px-4 text-gray-400 day-col hidden">Wed</td><td class="py-3 px-4 text-right text-gray-500">9</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">9</td><td class="py-3 px-4 text-gray-400">Jul 1</td><td class="py-3 px-4 text-gray-400 day-col hidden">Tue</td><td class="py-3 px-4 text-right">1.3K</td><td class="py-3 px-4 text-right">50</td><td class="py-3 px-4 text-right">2</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">10</td><td class="py-3 px-4 text-gray-400">Jun 30</td><td class="py-3 px-4 text-gray-400 day-col hidden">Mon</td><td class="py-3 px-4 text-right font-semibold">2.6K</td><td class="py-3 px-4 text-right">76</td><td class="py-3 px-4 text-right">6</td><td class="py-3 px-4 text-right">1</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">11</td><td class="py-3 px-4 text-gray-400">Jun 29</td><td class="py-3 px-4 text-gray-400 day-col hidden">Sun</td><td class="py-3 px-4 text-right">1.1K</td><td class="py-3 px-4 text-right">25</td><td class="py-3 px-4 text-right">3</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">12</td><td class="py-3 px-4 text-gray-400">Jun 28</td><td class="py-3 px-4 text-gray-400 day-col hidden">Sat</td><td class="py-3 px-4 text-right font-semibold">2.5K</td><td class="py-3 px-4 text-right">57</td><td class="py-3 px-4 text-right">7</td><td class="py-3 px-4 text-right">11</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">13</td><td class="py-3 px-4 text-gray-400">Jun 27</td><td class="py-3 px-4 text-gray-400 day-col hidden">Fri</td><td class="py-3 px-4 text-right">858</td><td class="py-3 px-4 text-right">12</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">14</td><td class="py-3 px-4 text-gray-400">Jun 26</td><td class="py-3 px-4 text-gray-400 day-col hidden">Thu</td><td class="py-3 px-4 text-right font-semibold">2.8K</td><td class="py-3 px-4 text-right">61</td><td class="py-3 px-4 text-right">5</td><td class="py-3 px-4 text-right">4</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">15</td><td class="py-3 px-4 text-gray-400">Jun 25</td><td class="py-3 px-4 text-gray-400 day-col hidden">Wed</td><td class="py-3 px-4 text-right font-semibold">4.7K</td><td class="py-3 px-4 text-right">123</td><td class="py-3 px-4 text-right">7</td><td class="py-3 px-4 text-right">28</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">16</td><td class="py-3 px-4 text-gray-400">Jun 24</td><td class="py-3 px-4 text-gray-400 day-col hidden">Tue</td><td class="py-3 px-4 text-right">1.4K</td><td class="py-3 px-4 text-right">32</td><td class="py-3 px-4 text-right">2</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">17</td><td class="py-3 px-4 text-gray-400">Jun 23</td><td class="py-3 px-4 text-gray-400 day-col hidden">Mon</td><td class="py-3 px-4 text-right font-semibold">2.6K</td><td class="py-3 px-4 text-right">62</td><td class="py-3 px-4 text-right">4</td><td class="py-3 px-4 text-right">5</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">18</td><td class="py-3 px-4 text-gray-400">Jun 22</td><td class="py-3 px-4 text-gray-400 day-col hidden">Sun</td><td class="py-3 px-4 text-right font-semibold">4.7K</td><td class="py-3 px-4 text-right">181</td><td class="py-3 px-4 text-right">4</td><td class="py-3 px-4 text-right">15</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">19</td><td class="py-3 px-4 text-gray-400">Jun 21</td><td class="py-3 px-4 text-gray-400 day-col hidden">Sat</td><td class="py-3 px-4 text-right font-semibold">4.6K</td><td class="py-3 px-4 text-right">135</td><td class="py-3 px-4 text-right">6</td><td class="py-3 px-4 text-right">12</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">20</td><td class="py-3 px-4 text-gray-400">Jun 20</td><td class="py-3 px-4 text-gray-400 day-col hidden">Fri</td><td class="py-3 px-4 text-right">951</td><td class="py-3 px-4 text-right">20</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">0</td></tr>
+            <tr class="border-b border-white/5 hover:bg-white/5 transition"><td class="py-3 px-4">21</td><td class="py-3 px-4 text-gray-400">Jun 19</td><td class="py-3 px-4 text-gray-400 day-col hidden">Thu</td><td class="py-3 px-4 text-right font-semibold">2.5K</td><td class="py-3 px-4 text-right">37</td><td class="py-3 px-4 text-right">1</td><td class="py-3 px-4 text-right">9</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Calendar View -->
+      <div id="view-calendar" class="hidden overflow-x-auto">
+        <div class="bg-erly-darker border border-white/10 rounded-2xl p-6">
+          <div class="grid grid-cols-7 gap-2 text-center text-xs text-gray-500 mb-4">
+            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+          </div>
+          <!-- June 2026 -->
+          <div class="mb-6">
+            <div class="text-center text-sm font-bold text-gray-400 mb-3">June 2026</div>
+            <div class="grid grid-cols-7 gap-2">
+              <div></div><div></div><div></div><div></div><div></div><div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">19</div><div class="font-bold text-sm">2.5K</div><div class="text-xs text-green-400">Thu</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">20</div><div class="font-bold text-sm">951</div><div class="text-xs text-green-400">Fri</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">21</div><div class="font-bold text-sm">4.6K</div><div class="text-xs text-green-400">Sat</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">22</div><div class="font-bold text-sm">4.7K</div><div class="text-xs text-green-400">Sun</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">23</div><div class="font-bold text-sm">2.6K</div><div class="text-xs text-green-400">Mon</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">24</div><div class="font-bold text-sm">1.4K</div><div class="text-xs text-green-400">Tue</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">25</div><div class="font-bold text-sm">4.7K</div><div class="text-xs text-green-400">Wed</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">26</div><div class="font-bold text-sm">2.8K</div><div class="text-xs text-green-400">Thu</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">27</div><div class="font-bold text-sm">858</div><div class="text-xs text-green-400">Fri</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">28</div><div class="font-bold text-sm">2.5K</div><div class="text-xs text-green-400">Sat</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">29</div><div class="font-bold text-sm">1.1K</div><div class="text-xs text-green-400">Sun</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">30</div><div class="font-bold text-sm">2.6K</div><div class="text-xs text-green-400">Mon</div></div>
+            </div>
+          </div>
+          <!-- July 2026 -->
+          <div>
+            <div class="text-center text-sm font-bold text-gray-400 mb-3">July 2026</div>
+            <div class="grid grid-cols-7 gap-2">
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">1</div><div class="font-bold text-sm">1.3K</div><div class="text-xs text-green-400">Tue</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">2</div><div class="font-bold text-sm text-gray-500">9</div><div class="text-xs text-green-400">Wed</div></div>
+              <div class="bg-erly-orange/10 border border-erly-orange/30 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">3</div><div class="font-bold text-sm text-erly-orange">1.8K</div><div class="text-xs text-green-400">Thu</div></div>
+              <div class="bg-erly-orange/10 border border-erly-orange/30 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">3</div><div class="font-bold text-sm text-erly-orange">3.3K</div><div class="text-xs text-green-400">Thu</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">5</div><div class="font-bold text-sm">1.4K</div><div class="text-xs text-green-400">Sat</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px] border border-white/20"><div class="text-xs text-gray-500">6</div><div class="font-bold text-sm">4.2K</div><div class="text-xs text-green-400">Sun</div></div>
+              <div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+            </div>
+          </div>
+          <!-- April 2026 (Viral) -->
+          <div class="mt-6">
+            <div class="text-center text-sm font-bold text-gray-400 mb-3">April 2026 <span class="text-erly-orange">(Viral)</span></div>
+            <div class="grid grid-cols-7 gap-2">
+              <div></div><div></div><div></div><div></div><div></div>
+              <div class="bg-erly-orange/20 border-2 border-erly-orange rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">25</div><div class="font-bold text-lg text-erly-orange">12.74M</div><div class="text-xs text-erly-orange font-bold">Fri VIRAL</div></div>
+              <div class="bg-white/5 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">26</div><div class="font-bold text-sm">-</div><div class="text-xs text-green-400">Sat</div></div>
+            </div>
+          </div>
+          <!-- May 2026 -->
+          <div class="mt-6">
+            <div class="text-center text-sm font-bold text-gray-400 mb-3">May 2026</div>
+            <div class="grid grid-cols-7 gap-2">
+              <div></div><div></div><div></div>
+              <div class="bg-erly-orange/10 border border-erly-orange/30 rounded-lg p-2 min-h-[60px]"><div class="text-xs text-gray-500">7</div><div class="font-bold text-sm text-erly-orange">23.7K</div><div class="text-xs text-green-400">Wed</div></div>
+              <div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Mobile Cards -->
@@ -378,7 +458,7 @@
         <div class="bg-erly-darker border border-erly-orange/30 rounded-xl p-4">
           <div class="flex justify-between items-center mb-2">
             <span class="text-erly-orange font-bold">#3 Viral</span>
-            <span class="text-xs text-gray-500">Apr 25</span>
+            <span class="text-xs text-gray-500">Apr 25 Fri</span>
           </div>
           <div class="grid grid-cols-4 gap-2 text-center">
             <div><div class="font-bold text-erly-orange">12.74M</div><div class="text-xs text-gray-500">Views</div></div>
@@ -390,7 +470,7 @@
         <div class="bg-erly-darker border border-white/5 rounded-xl p-4">
           <div class="flex justify-between items-center mb-2">
             <span class="font-semibold">#1</span>
-            <span class="text-xs text-gray-500">May 7</span>
+            <span class="text-xs text-gray-500">May 7 Wed</span>
           </div>
           <div class="grid grid-cols-4 gap-2 text-center text-sm">
             <div><div class="font-semibold">23.7K</div><div class="text-xs text-gray-500">Views</div></div>
@@ -402,7 +482,7 @@
         <div class="bg-erly-darker border border-white/5 rounded-xl p-4">
           <div class="flex justify-between items-center mb-2">
             <span class="font-semibold">#15</span>
-            <span class="text-xs text-gray-500">Jun 25</span>
+            <span class="text-xs text-gray-500">Jun 25 Wed</span>
           </div>
           <div class="grid grid-cols-4 gap-2 text-center text-sm">
             <div><div class="font-semibold">4.7K</div><div class="text-xs text-gray-500">Views</div></div>
@@ -414,6 +494,41 @@
       </div>
     </div>
   </section>
+
+  <!-- View Toggle Script -->
+  <script>
+    let currentView = 'table';
+    let dayColumnVisible = false;
+
+    function toggleView(view) {
+      currentView = view;
+      document.getElementById('view-table').style.display = view === 'table' ? 'block' : 'none';
+      document.getElementById('view-calendar').style.display = view === 'calendar' ? 'block' : 'none';
+      document.getElementById('view-table').className = view === 'table' ? 'hidden md:block overflow-x-auto' : 'hidden';
+      document.getElementById('view-calendar').className = view === 'calendar' ? 'overflow-x-auto' : 'hidden';
+      document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active', 'bg-erly-orange', 'text-white'));
+      document.getElementById('btn-' + view).classList.add('active', 'bg-erly-orange', 'text-white');
+    }
+
+    function toggleDayColumn() {
+      dayColumnVisible = !dayColumnVisible;
+      document.querySelectorAll('.day-col').forEach(el => {
+        el.classList.toggle('hidden');
+      });
+      const btn = document.getElementById('btn-day');
+      if (dayColumnVisible) {
+        btn.classList.add('bg-erly-orange', 'text-white');
+        btn.classList.remove('border-white/20', 'text-gray-400');
+      } else {
+        btn.classList.remove('bg-erly-orange', 'text-white');
+        btn.classList.add('border-white/20', 'text-gray-400');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      toggleView('table');
+    });
+  </script>
 
   <!-- Founder Interview Section -->
   <section id="interview" class="py-20 bg-erly-darker">
