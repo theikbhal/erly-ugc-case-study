@@ -61,6 +61,9 @@
     .view-btn.active { background: #FF6B35; color: white; }
     .view-btn:not(.active) { border: 1px solid rgba(255,255,255,0.2); color: #9ca3af; }
     .view-btn:not(.active):hover { border-color: rgba(255,255,255,0.4); color: white; }
+    .tag-btn.active { background: #FF6B35; color: white; }
+    .tag-btn:not(.active) { border: 1px solid rgba(255,255,255,0.2); color: #9ca3af; }
+    .tag-btn:not(.active):hover { border-color: rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.05); }
   </style>
 </head>
 <body class="bg-erly-darker text-white">
@@ -665,32 +668,145 @@
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-8">
         <h3 class="text-2xl font-black mb-2">More <span class="gradient-text">Erly Creators</span></h3>
+        <p class="text-gray-400 text-sm">Browse by project or tag</p>
       </div>
-      <div class="grid md:grid-cols-2 gap-6">
-        <a href="joe.html" class="block bg-gradient-to-br from-erly-orange/10 to-erly-blue/10 border border-white/10 rounded-2xl p-6 hover:border-erly-orange/30 transition">
-          <div class="flex items-center gap-4 mb-4">
-            <img src="https://p16-common.tiktokcdn.com/tos-useast8-avt-0068-tx2/c840f89e09a293c7f966913b565dd44b~tplv-tiktokx-cropcenter:100:100.webp" alt="@its_joes_pov" class="w-14 h-14 rounded-full border-2 border-erly-orange">
-            <div>
-              <div class="font-bold">Joe's POV</div>
-              <div class="text-sm text-gray-400">@its_joes_pov</div>
+
+      <!-- Tag Filter Bar -->
+      <div class="flex flex-wrap justify-center gap-2 mb-8" id="tag-filters">
+        <button onclick="filterByTag('all')" class="tag-btn active px-4 py-2 rounded-full text-sm font-semibold transition">All</button>
+        <button onclick="filterByTag('erly')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Erly</button>
+        <button onclick="filterByTag('college')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">College</button>
+        <button onclick="filterByTag('lifestyle')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Lifestyle</button>
+        <button onclick="filterByTag('fitness')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Fitness</button>
+        <button onclick="filterByTag('nano')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Nano</button>
+        <button onclick="filterByTag('micro')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Micro</button>
+      </div>
+
+      <!-- Creators Grid -->
+      <div id="creators-grid" class="grid md:grid-cols-2 gap-6">
+
+        <!-- Macy -->
+        <div class="creator-card" data-tags="erly,lifestyle,nano">
+          <a href="index.html" class="block bg-gradient-to-br from-erly-orange/10 to-erly-blue/10 border border-white/10 rounded-2xl p-6 hover:border-erly-orange/30 transition h-full">
+            <div class="flex items-center gap-4 mb-4">
+              <img src="https://p16-va.tiktokcdn.com/tos-alisg-avt-0068/1e55aabf37b06dce85e253e895188f59~tplv-tiktokx-cropcenter:200:200.webp" alt="@macywakesup" class="w-14 h-14 rounded-full border-2 border-erly-orange">
+              <div>
+                <div class="font-bold">macywakesup</div>
+                <div class="text-sm text-gray-400">@macywakesup</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 text-center mb-4">
+              <div><div class="font-bold text-erly-orange">1.3K</div><div class="text-xs text-gray-500">Followers</div></div>
+              <div><div class="font-bold">713.8K</div><div class="text-xs text-gray-500">Hearts</div></div>
+              <div><div class="font-bold">3.12%</div><div class="text-xs text-gray-500">Engagement</div></div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-erly-orange/20 text-erly-orange px-2 py-1 rounded text-xs font-semibold">erly</span>
+              <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-semibold">lifestyle</span>
+              <span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs font-semibold">nano</span>
+            </div>
+            <div class="text-sm text-erly-orange font-semibold text-center">View Full Analysis →</div>
+          </a>
+        </div>
+
+        <!-- Joe's POV -->
+        <div class="creator-card" data-tags="erly,college,lifestyle,fitness,micro">
+          <a href="joe.html" class="block bg-gradient-to-br from-erly-orange/10 to-erly-blue/10 border border-white/10 rounded-2xl p-6 hover:border-erly-orange/30 transition h-full">
+            <div class="flex items-center gap-4 mb-4">
+              <img src="https://p16-common.tiktokcdn.com/tos-useast8-avt-0068-tx2/c840f89e09a293c7f966913b565dd44b~tplv-tiktokx-cropcenter:100:100.webp" alt="@its_joes_pov" class="w-14 h-14 rounded-full border-2 border-erly-orange">
+              <div>
+                <div class="font-bold">Joe's POV</div>
+                <div class="text-sm text-gray-400">@its_joes_pov</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 text-center mb-4">
+              <div><div class="font-bold text-erly-orange">187.4K</div><div class="text-xs text-gray-500">Followers</div></div>
+              <div><div class="font-bold">5.37M</div><div class="text-xs text-gray-500">Hearts</div></div>
+              <div><div class="font-bold">6.59%</div><div class="text-xs text-gray-500">Engagement</div></div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="bg-erly-orange/20 text-erly-orange px-2 py-1 rounded text-xs font-semibold">erly</span>
+              <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs font-semibold">college</span>
+              <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-semibold">lifestyle</span>
+              <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-semibold">fitness</span>
+              <span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs font-semibold">micro</span>
+            </div>
+            <div class="text-sm text-erly-orange font-semibold text-center">View Full Analysis →</div>
+          </a>
+        </div>
+
+        <!-- Placeholder for future creators -->
+        <div class="creator-card" data-tags="">
+          <div class="bg-white/5 border border-white/5 rounded-2xl p-6 opacity-50 h-full">
+            <div class="text-center text-gray-500 py-8">
+              <div class="text-4xl mb-4">+</div>
+              <div class="font-semibold">More creators coming soon</div>
             </div>
           </div>
-          <div class="grid grid-cols-3 gap-4 text-center">
-            <div><div class="font-bold text-erly-orange">187.4K</div><div class="text-xs text-gray-500">Followers</div></div>
-            <div><div class="font-bold">5.37M</div><div class="text-xs text-gray-500">Hearts</div></div>
-            <div><div class="font-bold">6.59%</div><div class="text-xs text-gray-500">Engagement</div></div>
+        </div>
+
+      </div>
+
+      <!-- Tag Legend -->
+      <div class="mt-8 bg-erly-darker border border-white/5 rounded-2xl p-6">
+        <h4 class="font-bold text-sm mb-4 text-gray-400">TAG SYSTEM</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <div class="text-gray-500 mb-2">Projects</div>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-erly-orange/20 text-erly-orange px-2 py-1 rounded text-xs font-semibold">erly</span>
+            </div>
           </div>
-          <div class="mt-4 text-sm text-erly-orange font-semibold text-center">View Full Analysis →</div>
-        </a>
-        <div class="bg-white/5 border border-white/5 rounded-2xl p-6 opacity-50">
-          <div class="text-center text-gray-500 py-8">
-            <div class="text-4xl mb-4">+</div>
-            <div class="font-semibold">More creators coming soon</div>
+          <div>
+            <div class="text-gray-500 mb-2">Niche</div>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs font-semibold">college</span>
+              <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs font-semibold">lifestyle</span>
+              <span class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-semibold">fitness</span>
+            </div>
+          </div>
+          <div>
+            <div class="text-gray-500 mb-2">Tier</div>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs font-semibold">nano</span>
+              <span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs font-semibold">micro</span>
+            </div>
+          </div>
+          <div>
+            <div class="text-gray-500 mb-2">Filters</div>
+            <div class="text-gray-400 text-xs">Click tags to filter creators</div>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Tag Filter Script -->
+  <script>
+    let activeTag = 'all';
+
+    function filterByTag(tag) {
+      activeTag = tag;
+      document.querySelectorAll('.tag-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-erly-orange', 'text-white');
+      });
+      document.querySelector(`[onclick="filterByTag('${tag}')"]`).classList.add('active', 'bg-erly-orange', 'text-white');
+
+      document.querySelectorAll('.creator-card').forEach(card => {
+        const tags = card.dataset.tags;
+        if (!tags) return;
+        if (tag === 'all' || tags.includes(tag)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      filterByTag('all');
+    });
+  </script>
 
   <!-- Footer -->
   <footer class="py-8 bg-erly-darker border-t border-white/5">
