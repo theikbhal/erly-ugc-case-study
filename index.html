@@ -64,6 +64,8 @@
     .tag-btn.active { background: #FF6B35; color: white; }
     .tag-btn:not(.active) { border: 1px solid rgba(255,255,255,0.2); color: #9ca3af; }
     .tag-btn:not(.active):hover { border-color: rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.05); }
+    .add-btn { background: rgba(6,214,160,0.2); color: #06D6A0; border: 1px solid rgba(6,214,160,0.3); }
+    .add-btn:hover { background: rgba(6,214,160,0.3); border-color: #06D6A0; }
   </style>
 </head>
 <body class="bg-erly-darker text-white">
@@ -672,7 +674,7 @@
       </div>
 
       <!-- Tag Filter Bar -->
-      <div class="flex flex-wrap justify-center gap-2 mb-8" id="tag-filters">
+      <div class="flex flex-wrap items-center justify-center gap-2 mb-8" id="tag-filters">
         <button onclick="filterByTag('all')" class="tag-btn active px-4 py-2 rounded-full text-sm font-semibold transition">All</button>
         <button onclick="filterByTag('erly')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Erly</button>
         <button onclick="filterByTag('college')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">College</button>
@@ -680,13 +682,56 @@
         <button onclick="filterByTag('fitness')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Fitness</button>
         <button onclick="filterByTag('nano')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Nano</button>
         <button onclick="filterByTag('micro')" class="tag-btn px-4 py-2 rounded-full text-sm font-semibold transition">Micro</button>
+        <button onclick="openAddModal()" class="add-btn px-4 py-2 rounded-full text-sm font-semibold transition">
+          <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        </button>
+      </div>
+
+      <!-- Quick Add Modal -->
+      <div id="add-creator-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAddModal()"></div>
+        <div class="relative bg-erly-darker border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+          <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+          <h4 class="font-bold text-lg mb-4">Quick Add Creator</h4>
+          <div class="relative mb-4">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">@</span>
+            <input id="creator-username" type="text" placeholder="username" class="w-full bg-white/5 border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition" oninput="checkUsername()">
+          </div>
+          <div id="add-result" class="hidden">
+            <div id="match-existing" class="hidden bg-erly-orange/10 border border-erly-orange/30 rounded-xl p-4 mb-4">
+              <div class="flex items-center gap-3">
+                <img id="match-avatar" src="" alt="" class="w-10 h-10 rounded-full">
+                <div class="flex-1">
+                  <div class="font-semibold" id="match-name"></div>
+                  <div class="text-xs text-gray-400">Already exists</div>
+                </div>
+                <a id="match-link" href="" class="bg-erly-orange hover:bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">Open</a>
+              </div>
+            </div>
+            <div id="new-creator" class="hidden bg-white/5 border border-white/10 rounded-xl p-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-erly-green/20 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-erly-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </div>
+                <div class="flex-1">
+                  <div class="font-semibold" id="new-username"></div>
+                  <div class="text-xs text-gray-400">New creator</div>
+                </div>
+                <button onclick="addNewCreator()" class="bg-erly-green hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">Add</button>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 text-center">Enter TikTok username to add or find creator</p>
+        </div>
       </div>
 
       <!-- Creators Grid -->
       <div id="creators-grid" class="grid md:grid-cols-2 gap-6">
 
         <!-- Macy -->
-        <div class="creator-card" data-tags="erly,lifestyle,nano">
+        <div class="creator-card" data-tags="erly,lifestyle,nano" data-username="macywakesup">
           <a href="index.html" class="block bg-gradient-to-br from-erly-orange/10 to-erly-blue/10 border border-white/10 rounded-2xl p-6 hover:border-erly-orange/30 transition h-full">
             <div class="flex items-center gap-4 mb-4">
               <img src="https://p16-va.tiktokcdn.com/tos-alisg-avt-0068/1e55aabf37b06dce85e253e895188f59~tplv-tiktokx-cropcenter:200:200.webp" alt="@macywakesup" class="w-14 h-14 rounded-full border-2 border-erly-orange">
@@ -710,7 +755,7 @@
         </div>
 
         <!-- Joe's POV -->
-        <div class="creator-card" data-tags="erly,college,lifestyle,fitness,micro">
+        <div class="creator-card" data-tags="erly,college,lifestyle,fitness,micro" data-username="its_joes_pov">
           <a href="joe.html" class="block bg-gradient-to-br from-erly-orange/10 to-erly-blue/10 border border-white/10 rounded-2xl p-6 hover:border-erly-orange/30 transition h-full">
             <div class="flex items-center gap-4 mb-4">
               <img src="https://p16-common.tiktokcdn.com/tos-useast8-avt-0068-tx2/c840f89e09a293c7f966913b565dd44b~tplv-tiktokx-cropcenter:100:100.webp" alt="@its_joes_pov" class="w-14 h-14 rounded-full border-2 border-erly-orange">
@@ -781,9 +826,13 @@
     </div>
   </section>
 
-  <!-- Tag Filter Script -->
+  <!-- Tag Filter & Quick Add Script -->
   <script>
     let activeTag = 'all';
+    const existingCreators = [
+      { username: 'macywakesup', name: 'macywakesup', link: 'index.html', avatar: 'https://p16-va.tiktokcdn.com/tos-alisg-avt-0068/1e55aabf37b06dce85e253e895188f59~tplv-tiktokx-cropcenter:200:200.webp' },
+      { username: 'its_joes_pov', name: "Joe's POV", link: 'joe.html', avatar: 'https://p16-common.tiktokcdn.com/tos-useast8-avt-0068-tx2/c840f89e09a293c7f966913b565dd44b~tplv-tiktokx-cropcenter:100:100.webp' }
+    ];
 
     function filterByTag(tag) {
       activeTag = tag;
@@ -791,7 +840,6 @@
         btn.classList.remove('active', 'bg-erly-orange', 'text-white');
       });
       document.querySelector(`[onclick="filterByTag('${tag}')"]`).classList.add('active', 'bg-erly-orange', 'text-white');
-
       document.querySelectorAll('.creator-card').forEach(card => {
         const tags = card.dataset.tags;
         if (!tags) return;
@@ -801,6 +849,50 @@
           card.style.display = 'none';
         }
       });
+    }
+
+    function openAddModal() {
+      document.getElementById('add-creator-modal').classList.remove('hidden');
+      document.getElementById('creator-username').value = '';
+      document.getElementById('add-result').classList.add('hidden');
+      document.getElementById('creator-username').focus();
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-creator-modal').classList.add('hidden');
+    }
+
+    function checkUsername() {
+      const input = document.getElementById('creator-username').value.trim().toLowerCase().replace('@', '');
+      const resultDiv = document.getElementById('add-result');
+      const matchDiv = document.getElementById('match-existing');
+      const newDiv = document.getElementById('new-creator');
+
+      if (input.length < 2) {
+        resultDiv.classList.add('hidden');
+        return;
+      }
+
+      const match = existingCreators.find(c => c.username.toLowerCase() === input);
+      resultDiv.classList.remove('hidden');
+
+      if (match) {
+        matchDiv.classList.remove('hidden');
+        newDiv.classList.add('hidden');
+        document.getElementById('match-avatar').src = match.avatar;
+        document.getElementById('match-name').textContent = match.name;
+        document.getElementById('match-link').href = match.link;
+      } else {
+        matchDiv.classList.add('hidden');
+        newDiv.classList.remove('hidden');
+        document.getElementById('new-username').textContent = '@' + input;
+      }
+    }
+
+    function addNewCreator() {
+      const username = document.getElementById('creator-username').value.trim().toLowerCase().replace('@', '');
+      alert('Added @' + username + ' — Create ' + username + '.html page to complete setup');
+      closeAddModal();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
