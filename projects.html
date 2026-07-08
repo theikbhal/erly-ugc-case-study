@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | Influencer ROI Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            erly: { orange: '#FF6B35', dark: '#1A1A2E', darker: '#0F0F1A', blue: '#4361EE', green: '#06D6A0' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-text { background: linear-gradient(135deg, #FF6B35, #FF8E53); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-gradient { background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%); }
+    .modal-overlay { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+    .tag-btn.active { background: #FF6B35; color: white; }
+    .tag-btn:not(.active) { border: 1px solid rgba(255,255,255,0.2); color: #9ca3af; }
+    .tag-btn:not(.active):hover { border-color: rgba(255,255,255,0.4); color: white; background: rgba(255,255,255,0.05); }
+    .project-card:hover { border-color: rgba(255,107,53,0.3); }
+    .dm-template { cursor: pointer; }
+    .dm-template:hover { border-color: #FF6B35; }
+    .dm-template.selected { border-color: #06D6A0; background: rgba(6,214,160,0.1); }
+  </style>
+</head>
+<body class="bg-erly-darker text-white min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 bg-erly-darker/80 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-erly-orange rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-sm">E</span>
+          </div>
+          <span class="font-bold text-lg">Erly</span>
+        </a>
+        <span class="text-gray-600">|</span>
+        <span class="text-sm text-gray-400">Projects</span>
+      </div>
+      <div class="hidden md:flex items-center gap-6 text-sm text-gray-400">
+        <a href="index.html" class="hover:text-white transition">Home</a>
+        <a href="joe.html" class="hover:text-white transition">Joe's POV</a>
+        <a href="projects.html" class="text-erly-orange font-semibold">Projects</a>
+      </div>
+      <a href="https://erly.co/" target="_blank" class="bg-erly-orange hover:bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
+        Get Erly
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-20 pb-16">
+    <div class="max-w-6xl mx-auto px-4">
+
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-3xl font-black">My <span class="gradient-text">Projects</span></h1>
+          <p class="text-gray-400 text-sm mt-1">Manage influencer campaigns, templates, and messages</p>
+        </div>
+        <button onclick="openProjectModal()" class="bg-erly-orange hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold transition inline-flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          New Project
+        </button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="relative mb-6">
+        <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input id="search-input" type="text" placeholder="Search projects..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition" oninput="searchProjects()">
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white/5 rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-erly-orange" id="stat-projects">0</div>
+          <div class="text-xs text-gray-500">Projects</div>
+        </div>
+        <div class="bg-white/5 rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-erly-green" id="stat-influencers">0</div>
+          <div class="text-xs text-gray-500">Influencers</div>
+        </div>
+        <div class="bg-white/5 rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-erly-blue" id="stat-apps">0</div>
+          <div class="text-xs text-gray-500">Apps</div>
+        </div>
+        <div class="bg-white/5 rounded-xl p-4 text-center">
+          <div class="text-2xl font-bold text-yellow-400" id="stat-dms">0</div>
+          <div class="text-xs text-gray-500">DM Templates</div>
+        </div>
+      </div>
+
+      <!-- Projects Grid -->
+      <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Projects rendered by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden text-center py-16">
+        <div class="text-6xl mb-4">📁</div>
+        <h3 class="text-xl font-bold mb-2">No projects yet</h3>
+        <p class="text-gray-400 mb-6">Create your first project to start tracking influencer campaigns</p>
+        <button onclick="openProjectModal()" class="bg-erly-orange hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold transition">
+          Create Project
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Project Modal (Create/Edit) -->
+  <div id="project-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 modal-overlay" onclick="closeProjectModal()"></div>
+    <div class="relative bg-erly-darker border border-white/10 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button onclick="closeProjectModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h4 class="font-bold text-lg mb-4" id="modal-title">New Project</h4>
+      <input type="hidden" id="edit-project-id">
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Project Name</label>
+          <input id="project-name" type="text" placeholder="e.g., Erly Summer Campaign" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Description</label>
+          <textarea id="project-desc" rows="2" placeholder="Brief description of this project..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition resize-none"></textarea>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">App / Product</label>
+          <input id="project-app" type="text" placeholder="e.g., Erly, Calm, Headspace" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Budget</label>
+          <input id="project-budget" type="text" placeholder="e.g., $500/month" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Status</label>
+          <select id="project-status" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-erly-orange transition">
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="completed">Completed</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeProjectModal()" class="flex-1 border border-white/20 hover:border-white/40 text-white px-4 py-3 rounded-xl font-semibold transition">Cancel</button>
+        <button onclick="saveProject()" class="flex-1 bg-erly-orange hover:bg-orange-600 text-white px-4 py-3 rounded-xl font-semibold transition">Save Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Detail Modal -->
+  <div id="detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 modal-overlay" onclick="closeDetailModal()"></div>
+    <div class="relative bg-erly-darker border border-white/10 rounded-2xl w-full max-w-2xl mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-erly-darker border-b border-white/10 p-6 flex items-center justify-between z-10">
+        <div>
+          <h4 class="font-bold text-xl" id="detail-name">Project Name</h4>
+          <p class="text-sm text-gray-400" id="detail-app">App</p>
+        </div>
+        <button onclick="closeDetailModal()" class="text-gray-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Project Info -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-lg font-bold" id="detail-status">Active</div>
+            <div class="text-xs text-gray-500">Status</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-lg font-bold" id="detail-budget">$0</div>
+            <div class="text-xs text-gray-500">Budget</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-lg font-bold text-erly-orange" id="detail-influencer-count">0</div>
+            <div class="text-xs text-gray-500">Influencers</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-3 text-center">
+            <div class="text-lg font-bold text-erly-green" id="detail-dm-count">0</div>
+            <div class="text-xs text-gray-500">Templates</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-2 border-b border-white/10 pb-2">
+          <button onclick="showTab('influencers')" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition active" data-tab="influencers">Influencers</button>
+          <button onclick="showTab('templates')" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition" data-tab="templates">DM Templates</button>
+          <button onclick="showTab('messages')" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition" data-tab="messages">Messages</button>
+        </div>
+
+        <!-- Influencers Tab -->
+        <div id="tab-influencers" class="tab-content">
+          <div class="flex items-center justify-between mb-4">
+            <h5 class="font-bold">Assigned Influencers</h5>
+            <button onclick="openAddInfluencerModal()" class="bg-erly-green/20 text-erly-green px-3 py-1 rounded-full text-sm font-semibold hover:bg-erly-green/30 transition">+ Add</button>
+          </div>
+          <div id="influencer-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="no-influencers" class="text-center py-8 text-gray-500">
+            <p>No influencers assigned yet</p>
+          </div>
+        </div>
+
+        <!-- DM Templates Tab -->
+        <div id="tab-templates" class="tab-content hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h5 class="font-bold">DM Templates</h5>
+            <button onclick="openAddTemplateModal()" class="bg-erly-blue/20 text-erly-blue px-3 py-1 rounded-full text-sm font-semibold hover:bg-erly-blue/30 transition">+ New Template</button>
+          </div>
+          <div id="template-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="no-templates" class="text-center py-8 text-gray-500">
+            <p>No templates yet. Create one to quickly message influencers.</p>
+          </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div id="tab-messages" class="tab-content hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h5 class="font-bold">Sent Messages</h5>
+            <button onclick="openSendMessageModal()" class="bg-erly-orange/20 text-erly-orange px-3 py-1 rounded-full text-sm font-semibold hover:bg-erly-orange/30 transition">+ Send Message</button>
+          </div>
+          <div id="message-list" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="no-messages" class="text-center py-8 text-gray-50">
+            <p>No messages sent yet</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 pt-4 border-t border-white/10">
+          <button onclick="editCurrentProject()" class="flex-1 border border-white/20 hover:border-white/40 text-white px-4 py-3 rounded-xl font-semibold transition">Edit Project</button>
+          <button onclick="deleteCurrentProject()" class="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-3 rounded-xl font-semibold transition">Delete Project</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Influencer Modal -->
+  <div id="add-influencer-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center">
+    <div class="absolute inset-0 modal-overlay" onclick="closeAddInfluencerModal()"></div>
+    <div class="relative bg-erly-darker border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+      <button onclick="closeAddInfluencerModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h4 class="font-bold text-lg mb-4">Add Influencer</h4>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Username</label>
+          <input id="inf-username" type="text" placeholder="@username" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Platform</label>
+          <select id="inf-platform" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-erly-orange transition">
+            <option value="TikTok">TikTok</option>
+            <option value="Instagram">Instagram</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Twitter">Twitter/X</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Rate (optional)</label>
+          <input id="inf-rate" type="text" placeholder="e.g., $50/video" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Notes (optional)</label>
+          <input id="inf-notes" type="text" placeholder="e.g., Good engagement, posts daily" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+      </div>
+      <button onclick="addInfluencer()" class="w-full bg-erly-green hover:bg-green-600 text-white px-4 py-3 rounded-xl font-semibold transition mt-4">Add Influencer</button>
+    </div>
+  </div>
+
+  <!-- Add Template Modal -->
+  <div id="add-template-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center">
+    <div class="absolute inset-0 modal-overlay" onclick="closeAddTemplateModal()"></div>
+    <div class="relative bg-erly-darker border border-white/10 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
+      <button onclick="closeAddTemplateModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h4 class="font-bold text-lg mb-4">New DM Template</h4>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Template Name</label>
+          <input id="tpl-name" type="text" placeholder="e.g., Initial Outreach" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition">
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Message Template</label>
+          <textarea id="tpl-message" rows="5" placeholder="Hey {{name}}! Love your content. We'd like to collaborate on {{app}}..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition resize-none"></textarea>
+          <p class="text-xs text-gray-500 mt-1">Variables: {{name}}, {{app}}, {{budget}}, {{project}}</p>
+        </div>
+      </div>
+      <button onclick="addTemplate()" class="w-full bg-erly-blue hover:bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold transition mt-4">Save Template</button>
+    </div>
+  </div>
+
+  <!-- Send Message Modal -->
+  <div id="send-message-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center">
+    <div class="absolute inset-0 modal-overlay" onclick="closeSendMessageModal()"></div>
+    <div class="relative bg-erly-darker border border-white/10 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-2xl">
+      <button onclick="closeSendMessageModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h4 class="font-bold text-lg mb-4">Send Message</h4>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">To Influencer</label>
+          <select id="msg-to" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-erly-orange transition">
+            <option value="">Select influencer...</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Use Template (optional)</label>
+          <select id="msg-template" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-erly-orange transition" onchange="applyTemplate()">
+            <option value="">Select template...</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Message</label>
+          <textarea id="msg-content" rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-erly-orange transition resize-none"></textarea>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400 mb-1 block">Status</label>
+          <select id="msg-status" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-erly-orange transition">
+            <option value="sent">Sent</option>
+            <option value="replied">Replied</option>
+            <option value="pending">Pending</option>
+            <option value="declined">Declined</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="sendMessage()" class="w-full bg-erly-orange hover:bg-orange-600 text-white px-4 py-3 rounded-xl font-semibold transition mt-4">Send Message</button>
+    </div>
+  </div>
+
+  <!-- Main Script -->
+  <script>
+    let projects = JSON.parse(localStorage.getItem('ugc_projects') || '[]');
+    let currentProjectId = null;
+
+    // --- Render ---
+    function render() {
+      const grid = document.getElementById('projects-grid');
+      const empty = document.getElementById('empty-state');
+      const search = document.getElementById('search-input').value.toLowerCase();
+
+      const filtered = projects.filter(p =>
+        p.name.toLowerCase().includes(search) ||
+        p.app.toLowerCase().includes(search) ||
+        p.description.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = filtered.map(p => `
+          <div class="project-card bg-erly-darker border border-white/10 rounded-2xl p-6 cursor-pointer transition hover:bg-white/5" onclick="openDetail('${p.id}')">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(p.status)}">${p.status}</span>
+              <span class="text-xs text-gray-500">${p.influencers.length} creators</span>
+            </div>
+            <h3 class="font-bold text-lg mb-1">${p.name}</h3>
+            <p class="text-sm text-gray-400 mb-4 line-clamp-2">${p.description || 'No description'}</p>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="bg-white/10 px-2 py-1 rounded">${p.app}</span>
+              ${p.budget ? `<span class="text-gray-500">•</span><span class="text-gray-400">${p.budget}</span>` : ''}
+            </div>
+            <div class="flex gap-2 mt-4">
+              ${p.influencers.slice(0, 3).map(i => `<span class="bg-erly-orange/20 text-erly-orange px-2 py-1 rounded text-xs">${i.username}</span>`).join('')}
+              ${p.influencers.length > 3 ? `<span class="bg-white/10 text-gray-400 px-2 py-1 rounded text-xs">+${p.influencers.length - 3}</span>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Stats
+      document.getElementById('stat-projects').textContent = projects.length;
+      document.getElementById('stat-influencers').textContent = projects.reduce((sum, p) => sum + p.influencers.length, 0);
+      document.getElementById('stat-apps').textContent = [...new Set(projects.map(p => p.app))].length;
+      document.getElementById('stat-dms').textContent = projects.reduce((sum, p) => sum + p.templates.length, 0);
+
+      localStorage.setItem('ugc_projects', JSON.stringify(projects));
+    }
+
+    function getStatusColor(status) {
+      const colors = {
+        active: 'bg-erly-green/20 text-erly-green',
+        paused: 'bg-yellow-500/20 text-yellow-400',
+        completed: 'bg-erly-blue/20 text-erly-blue',
+        draft: 'bg-white/10 text-gray-400'
+      };
+      return colors[status] || colors.draft;
+    }
+
+    function searchProjects() { render(); }
+
+    // --- Project CRUD ---
+    function openProjectModal(id) {
+      document.getElementById('project-modal').classList.remove('hidden');
+      if (id) {
+        const p = projects.find(x => x.id === id);
+        document.getElementById('modal-title').textContent = 'Edit Project';
+        document.getElementById('edit-project-id').value = id;
+        document.getElementById('project-name').value = p.name;
+        document.getElementById('project-desc').value = p.description;
+        document.getElementById('project-app').value = p.app;
+        document.getElementById('project-budget').value = p.budget;
+        document.getElementById('project-status').value = p.status;
+      } else {
+        document.getElementById('modal-title').textContent = 'New Project';
+        document.getElementById('edit-project-id').value = '';
+        document.getElementById('project-name').value = '';
+        document.getElementById('project-desc').value = '';
+        document.getElementById('project-app').value = '';
+        document.getElementById('project-budget').value = '';
+        document.getElementById('project-status').value = 'active';
+      }
+    }
+
+    function closeProjectModal() { document.getElementById('project-modal').classList.add('hidden'); }
+
+    function saveProject() {
+      const id = document.getElementById('edit-project-id').value;
+      const data = {
+        name: document.getElementById('project-name').value.trim(),
+        description: document.getElementById('project-desc').value.trim(),
+        app: document.getElementById('project-app').value.trim(),
+        budget: document.getElementById('project-budget').value.trim(),
+        status: document.getElementById('project-status').value
+      };
+      if (!data.name) { alert('Project name required'); return; }
+
+      if (id) {
+        const idx = projects.findIndex(x => x.id === id);
+        projects[idx] = { ...projects[idx], ...data };
+      } else {
+        projects.push({ id: Date.now().toString(), ...data, influencers: [], templates: [], messages: [] });
+      }
+      closeProjectModal();
+      render();
+    }
+
+    // --- Detail Modal ---
+    function openDetail(id) {
+      currentProjectId = id;
+      const p = projects.find(x => x.id === id);
+      document.getElementById('detail-modal').classList.remove('hidden');
+      document.getElementById('detail-name').textContent = p.name;
+      document.getElementById('detail-app').textContent = p.app;
+      document.getElementById('detail-status').textContent = p.status;
+      document.getElementById('detail-budget').textContent = p.budget || '—';
+      document.getElementById('detail-influencer-count').textContent = p.influencers.length;
+      document.getElementById('detail-dm-count').textContent = p.templates.length;
+      renderInfluencers();
+      renderTemplates();
+      renderMessages();
+      showTab('influencers');
+    }
+
+    function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); currentProjectId = null; }
+
+    function editCurrentProject() {
+      closeDetailModal();
+      setTimeout(() => openProjectModal(currentProjectId), 200);
+    }
+
+    function deleteCurrentProject() {
+      if (!confirm('Delete this project?')) return;
+      projects = projects.filter(x => x.id !== currentProjectId);
+      closeDetailModal();
+      render();
+    }
+
+    // --- Tabs ---
+    function showTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active', 'bg-white/10', 'text-white'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active', 'bg-white/10', 'text-white');
+    }
+
+    // --- Influencers ---
+    function renderInfluencers() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const list = document.getElementById('influencer-list');
+      const empty = document.getElementById('no-influencers');
+      if (p.influencers.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.add('hidden');
+        list.innerHTML = p.influencers.map((inf, i) => `
+          <div class="bg-white/5 rounded-xl p-4 flex items-center gap-4">
+            <div class="w-10 h-10 bg-erly-orange/20 rounded-full flex items-center justify-center text-erly-orange font-bold text-sm">${inf.username[0].toUpperCase()}</div>
+            <div class="flex-1">
+              <div class="font-semibold">@${inf.username}</div>
+              <div class="text-xs text-gray-400">${inf.platform}${inf.rate ? ' • ' + inf.rate : ''}${inf.notes ? ' • ' + inf.notes : ''}</div>
+            </div>
+            <button onclick="removeInfluencer(${i})" class="text-red-400 hover:text-red-300 text-sm">Remove</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function openAddInfluencerModal() { document.getElementById('add-influencer-modal').classList.remove('hidden'); }
+    function closeAddInfluencerModal() { document.getElementById('add-influencer-modal').classList.add('hidden'); }
+
+    function addInfluencer() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const username = document.getElementById('inf-username').value.trim().replace('@', '');
+      if (!username) { alert('Username required'); return; }
+      p.influencers.push({
+        username,
+        platform: document.getElementById('inf-platform').value,
+        rate: document.getElementById('inf-rate').value.trim(),
+        notes: document.getElementById('inf-notes').value.trim()
+      });
+      closeAddInfluencerModal();
+      document.getElementById('inf-username').value = '';
+      document.getElementById('inf-rate').value = '';
+      document.getElementById('inf-notes').value = '';
+      openDetail(currentProjectId);
+      render();
+    }
+
+    function removeInfluencer(idx) {
+      const p = projects.find(x => x.id === currentProjectId);
+      p.influencers.splice(idx, 1);
+      openDetail(currentProjectId);
+      render();
+    }
+
+    // --- Templates ---
+    function renderTemplates() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const list = document.getElementById('template-list');
+      const empty = document.getElementById('no-templates');
+      if (p.templates.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.add('hidden');
+        list.innerHTML = p.templates.map((t, i) => `
+          <div class="bg-white/5 border border-white/10 rounded-xl p-4 dm-template" onclick="selectTemplate(${i})">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-semibold text-sm">${t.name}</span>
+              <button onclick="event.stopPropagation(); removeTemplate(${i})" class="text-red-400 hover:text-red-300 text-xs">Delete</button>
+            </div>
+            <p class="text-xs text-gray-400 line-clamp-2">${t.message}</p>
+          </div>
+        `).join('');
+      }
+    }
+
+    function openAddTemplateModal() { document.getElementById('add-template-modal').classList.remove('hidden'); }
+    function closeAddTemplateModal() { document.getElementById('add-template-modal').classList.add('hidden'); }
+
+    function addTemplate() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const name = document.getElementById('tpl-name').value.trim();
+      const message = document.getElementById('tpl-message').value.trim();
+      if (!name || !message) { alert('Name and message required'); return; }
+      p.templates.push({ name, message });
+      closeAddTemplateModal();
+      document.getElementById('tpl-name').value = '';
+      document.getElementById('tpl-message').value = '';
+      openDetail(currentProjectId);
+      render();
+    }
+
+    function removeTemplate(idx) {
+      const p = projects.find(x => x.id === currentProjectId);
+      p.templates.splice(idx, 1);
+      openDetail(currentProjectId);
+      render();
+    }
+
+    function selectTemplate(idx) {
+      document.querySelectorAll('.dm-template').forEach(el => el.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+    }
+
+    // --- Messages ---
+    function renderMessages() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const list = document.getElementById('message-list');
+      const empty = document.getElementById('no-messages');
+      if (p.messages.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.remove('hidden');
+        empty.classList.add('hidden');
+        list.innerHTML = p.messages.map((m, i) => {
+          const statusColors = { sent: 'bg-erly-blue/20 text-erly-blue', replied: 'bg-erly-green/20 text-erly-green', pending: 'bg-yellow-500/20 text-yellow-400', declined: 'bg-red-500/20 text-red-400' };
+          return `
+            <div class="bg-white/5 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-semibold text-sm">@${m.to}</span>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-1 rounded text-xs ${statusColors[m.status]}">${m.status}</span>
+                  <span class="text-xs text-gray-500">${m.date}</span>
+                </div>
+              </div>
+              <p class="text-xs text-gray-400">${m.content}</p>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function openSendMessageModal() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const toSelect = document.getElementById('msg-to');
+      const tplSelect = document.getElementById('msg-template');
+      toSelect.innerHTML = '<option value="">Select influencer...</option>' + p.influencers.map(i => `<option value="${i.username}">@${i.username}</option>`).join('');
+      tplSelect.innerHTML = '<option value="">Select template...</option>' + p.templates.map((t, i) => `<option value="${i}">${t.name}</option>`).join('');
+      document.getElementById('msg-content').value = '';
+      document.getElementById('msg-status').value = 'sent';
+      document.getElementById('send-message-modal').classList.remove('hidden');
+    }
+
+    function closeSendMessageModal() { document.getElementById('send-message-modal').classList.add('hidden'); }
+
+    function applyTemplate() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const idx = document.getElementById('msg-template').value;
+      if (idx === '') return;
+      const t = p.templates[idx];
+      let msg = t.message
+        .replace('{{name}}', document.getElementById('msg-to').value)
+        .replace('{{app}}', p.app)
+        .replace('{{budget}}', p.budget)
+        .replace('{{project}}', p.name);
+      document.getElementById('msg-content').value = msg;
+    }
+
+    function sendMessage() {
+      const p = projects.find(x => x.id === currentProjectId);
+      const to = document.getElementById('msg-to').value;
+      const content = document.getElementById('msg-content').value.trim();
+      const status = document.getElementById('msg-status').value;
+      if (!to || !content) { alert('Select influencer and write message'); return; }
+      p.messages.unshift({ to, content, status, date: new Date().toLocaleDateString() });
+      closeSendMessageModal();
+      openDetail(currentProjectId);
+      render();
+    }
+
+    // --- Init ---
+    render();
+  </script>
+
+</body>
+</html>
